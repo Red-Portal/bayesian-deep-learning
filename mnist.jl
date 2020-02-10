@@ -32,7 +32,6 @@ batch_size = 512
 data   = trainimgs(CIFAR10)
 labels = onehotbatch([data[i].ground_truth.class for i in 1:50000],1:10)
 imgs   = [getarray(data[i].img) for i in 1:50000]
-validx = collect()
 
 train_set = [(cat(imgs[i]..., dims = 4), labels[:,i]) for i in partition(1:49000,     batch_size)]
 val_set   = [(cat(imgs[i]..., dims = 4), labels[:,i]) for i in partition(49001:50000, batch_size)]
