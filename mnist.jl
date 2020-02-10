@@ -151,7 +151,7 @@ for epoch_idx in 1:100
 
     # Calculate accuracy:
 
-    acc = mean([accuracy(d...) for d in data])
+    acc = mean([accuracy(d...) for d in val_set])
     @info(@sprintf("[%d]: Val accuracy: %.4f", epoch_idx, acc))
 
     # If our accuracy is good enough, quit out.
