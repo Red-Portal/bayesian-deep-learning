@@ -118,7 +118,7 @@ function Flux.train!(loss, ps, data, opt; cb = () -> ())
             batch_x = @views d[1][:, i]
             batch_y = @views d[2][i]
             batches[i] = Flux.gradient(ps) do
-                loss(...)
+                loss(batch_x, batch_y)
             end
         end
         for i = 1:batch
