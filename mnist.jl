@@ -7,7 +7,6 @@
 # accuracy after training for approximately 20 epochs.
 
 using Flux, Flux.Data.MNIST, Statistics
-using Flux: Params, gradient, update!
 using Images
 using Metalhead
 using Base.Iterators
