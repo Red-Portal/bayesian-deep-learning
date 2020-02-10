@@ -108,7 +108,7 @@ accuracy(x, y) = mean(onecold(model(x)) .== onecold(y))
 
 function Flux.train!(loss, ps, data, opt; cb = () -> ())
   ps = Flux.Params(ps)
-  cb = runall(cb)
+  #cb = runall(cb)
   Threads.@threads for d in data
     try
       gs = Flux.gradient(ps) do
