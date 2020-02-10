@@ -80,11 +80,11 @@ model = Chain(
   BatchNorm(512),
   MaxPool((2,2)),
   x -> reshape(x, :, size(x, 4)),
-  Dense(512, 1024, relu),
+  Dense(512, 4096, relu),
   #Dropout(0.5),
-  Dense(4096, 124, relu),
+  Dense(4096, 4096, relu),
   #Dropout(0.5),
-  Dense(1024, 10),
+  Dense(4096, 10),
   softmax)
 
 # Load model and datasets onto GPU, if enabled
