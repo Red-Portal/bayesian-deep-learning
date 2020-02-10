@@ -122,13 +122,11 @@ function Flux.train!(loss, ps, data, opt; cb = () -> ())
             end
         end
 
-        aggr = deepcopy(batches[1])
+        aggr = IdDict{Any, Any}()
         for θ in ps
             aggr[θ] = mean([batch[θ] for batch in batches])
         end
-        
         Flux.update!(opt, ps, aggr)
-        #cb()
     catch ex
       if ex isa StopException
         break
