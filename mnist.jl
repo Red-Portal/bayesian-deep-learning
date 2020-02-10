@@ -29,18 +29,19 @@ batch_size = 512
 
 # Load labels and images from Flux.Data.MNIST
 @info("Loading data set")
-train        = trainimgs(CIFAR10)
-train_imgs   = cat([getarray(train[i].img) for i in 1:50000]..., dims=4)
+data   = trainimgs(CIFAR10)
+labels = onehotbatch([data[i].ground_truth.class for i in 1:50000],1:10)
+imgs   = [getarray(data[i].img) for i in 1:50000]
+validx = collect()
 
-mb_idxs      = partition(1:length(train_imgs), batch_size)
-train_labels = onehotbatch([train[i].ground_truth.class for i in 1:50000],1:10)
-train_set    = [make_minibatch(train_imgs, train_labels, i) for i in mb_idxs]
+train_set = [(cat(imgs[i]..., dims = 4), labels[:,i]) for i in partition(1:49000,     batch_size)]
+val_set   = [(cat(imgs[i]..., dims = 4), labels[:,i]) for i in partition(49001:50000, batch_size)]
 
 # Prepare test set as one giant minibatch:
-val        = valimgs(CIFAR10)
-val_imgs   = cat([getarray(val[i].img) for i in 1:10000]..., dims=4)
-val_labels = onehotbatch([val[i].ground_truth.class for i in 1:10000], 1:10) |> gpu
-val_set    = make_minibatch(val_imgs, val_labels, 1:length(val_imgs))
+# test       = valimgs(CIFAR10)
+# val_imgs   = cat([getarray(val[i].img) for i in 1:10000]..., dims=4)
+# val_labels = onehotbatch([val[i].ground_truth.class for i in 1:10000], 1:10) |> gpu
+# val_set    = make_minibatch(val_imgs, val_labels, 1:length(val_imgs))
 
 # Define our model.  We will use a simple convolutional architecture with
 # three iterations of Conv -> ReLU -> MaxPool, followed by a final Dense
