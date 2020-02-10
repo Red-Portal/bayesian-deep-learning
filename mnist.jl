@@ -106,7 +106,7 @@ function loss(x, y)
     y_hat = model(x_aug)
     return Flux.crossentropy(y_hat, y)
 end
-accuracy(x, y) = mean(onecold(model(x)) .== onecold(y))
+accuracy(x, y) = mean(Flux.onecold(model(x)) .== Flux.onecold(y))
 
 function Flux.train!(loss, ps, data, opt; cb = () -> ())
   ps = Flux.Params(ps)
