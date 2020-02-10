@@ -126,7 +126,7 @@ function Flux.train!(loss, ps, data, opt; cb = () -> ())
         for θ in ps
             aggr[θ] = mean([batch[θ] for batch in batches])
         end
-        Flux.update!(opt, ps, aggr)
+        update!(opt, ps, aggr)
     catch ex
       if ex isa StopException
         break
