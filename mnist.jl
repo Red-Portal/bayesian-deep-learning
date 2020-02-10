@@ -115,15 +115,19 @@ function Flux.train!(loss, ps, data, opt; cb = () -> ())
         nbatch  = size(d[1], 2)
         batches = Array{Any}(undef, nbatch)
         Threads.@threads for i = 1:nbatch
-            batch_x = @views d[1][:,:,:,i]
-            batch_y = @views d[2][:,i]
+            batch_x = @views d[1][:,:,:,i:i+1]
+            batch_y = @views d[2][:,i:i+1]
             batches[i] = Flux.gradient(ps) do
                 loss(batch_x, batch_y)
             end
         end
-        for i = 1:batch
-            Flux.update!(opt, ps, batches[i])
+
+        aggr = deepcopy(batches[1])
+        for key in keys(batches[1])
+            aggr[key] = mean([batch[key] for batch in batches])
         end
+        
+        Flux.update!(opt, ps, aggr)
         #cb()
     catch ex
       if ex isa StopException
