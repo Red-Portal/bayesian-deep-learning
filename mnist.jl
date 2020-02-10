@@ -123,8 +123,8 @@ function Flux.train!(loss, ps, data, opt; cb = () -> ())
         end
 
         aggr = deepcopy(batches[1])
-        for key in keys(batches[1])
-            aggr[key] = mean([batch[key] for batch in batches])
+        for sym in batches[1]
+            aggr[sym] = mean([batch[sym] for batch in batches])
         end
         
         Flux.update!(opt, ps, aggr)
