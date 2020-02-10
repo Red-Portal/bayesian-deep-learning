@@ -81,11 +81,11 @@ model = Chain(
   BatchNorm(512),
   MaxPool((2,2)),
   x -> reshape(x, :, size(x, 4)),
-  Dense(512, 4096, relu),
+  Dense(512, 1024, relu),
   #Dropout(0.5),
-  Dense(4096, 4096, relu),
+  Dense(1024, 1024, relu),
   #Dropout(0.5),
-  Dense(4096, 10),
+  Dense(1024, 10),
   softmax)
 
 # Load model and datasets onto GPU, if enabled
@@ -150,7 +150,8 @@ for epoch_idx in 1:100
     Flux.train!(loss, params(model), train_set, opt)
 
     # Calculate accuracy:
-    acc = accuracy(val_set...)
+
+    acc = mean([accuracy(d...) for d in data])
     @info(@sprintf("[%d]: Val accuracy: %.4f", epoch_idx, acc))
 
     # If our accuracy is good enough, quit out.
