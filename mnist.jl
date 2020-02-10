@@ -122,12 +122,9 @@ function Flux.train!(loss, ps, data, opt; cb = () -> ())
                 loss(batch_x, batch_y)
             end
         end
-
-        aggr = IdDict{Any, Any}()
         for θ in ps
-            aggr[θ] = mean([batch[θ] for batch in batches])
+            update!(opt, ps,  mean([batch[θ] for batch in batches]))
         end
-        update!(opt, ps,  Zygote.Grads(aggr))
     catch ex
       if ex isa StopException
         break
