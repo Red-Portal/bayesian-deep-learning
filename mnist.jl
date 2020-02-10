@@ -11,6 +11,7 @@ using Images
 using Metalhead
 using Base.Iterators
 using Printf, BSON
+using ProgressMeter
 
 getarray(X) = Float32.(permutedims(channelview(X), (2, 3, 1)))
 
@@ -108,14 +109,22 @@ accuracy(x, y) = mean(onecold(model(x)) .== onecold(y))
 
 function Flux.train!(loss, ps, data, opt; cb = () -> ())
   ps = Flux.Params(ps)
-  #cb = runall(cb)
-  Threads.@threads for d in data
+  cb = runall(cb)
+  @showprogress for d in data
     try
-      gs = Flux.gradient(ps) do
-        loss(d...)
-      end
-      Flux.update!(opt, ps, gs)
-      cb()
+        nbatch  = size(d[1], 2)
+        batches = Array{Any}(undef, nbatch)
+        Threads.@threads for i = 1:nbatch
+            batch_x = @views d[1][:, i]
+            batch_y = @views d[2][i]
+            batches[i] = Flux.gradient(ps) do
+                loss(...)
+            end
+        end
+        for i = 1:batch
+            Flux.update!(opt, ps, batches[i])
+        end
+        cb()
     catch ex
       if ex isa StopException
         break
