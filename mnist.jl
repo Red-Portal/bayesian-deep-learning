@@ -10,7 +10,6 @@ using Flux, Flux.Data.MNIST, Statistics
 using Images
 using Metalhead
 using Base.Iterators
-
 using Printf, BSON
 
 getarray(X) = Float32.(permutedims(channelview(X), (2, 3, 1)))
@@ -21,7 +20,7 @@ function make_minibatch(X, Y, idxs)
     for i in 1:length(idxs)
         X_batch[:, :, :, i] = Float32.(X[idxs[i]])
     end
-    Y_batch = onehotbatch(Y[idxs], 0:9)
+    Y_batch = Flux.onehotbatch(Y[idxs], 0:9)
     return (X_batch, Y_batch)
 end
 
@@ -30,7 +29,7 @@ batch_size = 512
 # Load labels and images from Flux.Data.MNIST
 @info("Loading data set")
 data   = trainimgs(CIFAR10)
-labels = onehotbatch([data[i].ground_truth.class for i in 1:50000],1:10)
+labels = Flux.onehotbatch([data[i].ground_truth.class for i in 1:50000],1:10)
 imgs   = [getarray(data[i].img) for i in 1:50000]
 
 train_set = [(cat(imgs[i]..., dims = 4), labels[:,i]) for i in partition(1:49000,     batch_size)]
@@ -108,14 +107,14 @@ end
 accuracy(x, y) = mean(onecold(model(x)) .== onecold(y))
 
 function Flux.train!(loss, ps, data, opt; cb = () -> ())
-  ps = Params(ps)
-  cb = runall(cb)
+  ps = Flux.Params(ps)
+  cb = Flux.runall(cb)
   Threads.@threads for d in data
     try
-      gs = gradient(ps) do
+      gs = Flux.gradient(ps) do
         loss(d...)
       end
-      update!(opt, ps, gs)
+      Flux.update!(opt, ps, gs)
       cb()
     catch ex
       if ex isa StopException
