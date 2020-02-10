@@ -109,14 +109,14 @@ accuracy(x, y) = mean(onecold(model(x)) .== onecold(y))
 
 function Flux.train!(loss, ps, data, opt; cb = () -> ())
   ps = Flux.Params(ps)
-  cb = runall(cb)
+  #cb = runall(cb)
   @showprogress for d in data
     try
         nbatch  = size(d[1], 2)
         batches = Array{Any}(undef, nbatch)
         Threads.@threads for i = 1:nbatch
-            batch_x = @views d[1][:, i]
-            batch_y = @views d[2][i]
+            batch_x = @views d[1][:,:,:,i]
+            batch_y = @views d[2][:,i]
             batches[i] = Flux.gradient(ps) do
                 loss(batch_x, batch_y)
             end
@@ -124,7 +124,7 @@ function Flux.train!(loss, ps, data, opt; cb = () -> ())
         for i = 1:batch
             Flux.update!(opt, ps, batches[i])
         end
-        cb()
+        #cb()
     catch ex
       if ex isa StopException
         break
