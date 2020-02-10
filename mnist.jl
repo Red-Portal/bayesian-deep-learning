@@ -138,9 +138,6 @@ for epoch_idx in 1:100
     global best_acc, last_improvement
     # Train for a single epoch
 
-    
-    x .-= Flux.apply!(opt, x, x̄)
-
     Flux.train!(loss, params(model), train_set, opt)
 
     # Calculate accuracy:
