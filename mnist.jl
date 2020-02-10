@@ -13,6 +13,8 @@ using Base.Iterators
 
 using Printf, BSON
 
+getarray(X) = Float32.(permutedims(channelview(X), (2, 3, 1)))
+
 # Bundle images together with labels and group into minibatchess
 function make_minibatch(X, Y, idxs)
     X_batch = Array{Float32}(undef, size(X[1])..., 1, length(idxs))
