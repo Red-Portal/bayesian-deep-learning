@@ -7,6 +7,7 @@
 # accuracy after training for approximately 20 epochs.
 
 using Flux, Flux.Data.MNIST, Statistics
+using Flux: Params, gradient, update!
 using Images
 using Metalhead
 using Base.Iterators
@@ -123,7 +124,7 @@ function Flux.train!(loss, ps, data, opt; cb = () -> ())
             end
         end
         for θ in ps
-            Zygote.update!(opt, θ,  mean([batch[θ] for batch in batches]))
+            Flux.update!(opt, θ,  mean([batch[θ] for batch in batches]))
         end
     catch ex
       if ex isa StopException
