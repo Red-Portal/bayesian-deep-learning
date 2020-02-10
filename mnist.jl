@@ -7,10 +7,10 @@
 # accuracy after training for approximately 20 epochs.
 
 using Flux, Flux.Data.MNIST, Statistics
-using Flux: onehotbatch, onecold, crossentropy, throttle
-using Metalhead: trainimgs, CIFAR10
-using Images: channelview
-using Base.Iterators: repeated, partition
+using Images
+using Metalhead
+using Base.Iterators
+
 using Printf, BSON
 
 # Bundle images together with labels and group into minibatchess
