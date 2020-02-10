@@ -23,13 +23,14 @@ function make_minibatch(X, Y, idxs)
     return (X_batch, Y_batch)
 end
 
-batch_size = 128
+batch_size = 512
 
 # Load labels and images from Flux.Data.MNIST
 @info("Loading data set")
 train        = trainimgs(CIFAR10)
-mb_idxs      = partition(1:length(train_imgs), batch_size)
 train_imgs   = cat([getarray(train[i].img) for i in 1:50000]..., dims=4)
+
+mb_idxs      = partition(1:length(train_imgs), batch_size)
 train_labels = onehotbatch([train[i].ground_truth.class for i in 1:50000],1:10)
 train_set    = [make_minibatch(train_imgs, train_labels, i) for i in mb_idxs]
 
