@@ -123,7 +123,7 @@ function Flux.train!(loss, ps, data, opt; cb = () -> ())
             end
         end
         for θ in ps
-            Flux.update!(opt, θ,  mean([batch[θ] for batch in batches]))
+            Zygote.update!(opt, θ,  mean([batch[θ] for batch in batches]))
         end
     catch ex
       if ex isa StopException
