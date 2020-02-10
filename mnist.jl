@@ -12,6 +12,7 @@ using Metalhead
 using Base.Iterators
 using Printf, BSON
 using ProgressMeter
+using Zygote
 
 getarray(X) = Float32.(permutedims(channelview(X), (2, 3, 1)))
 
@@ -122,9 +123,9 @@ function Flux.train!(loss, ps, data, opt; cb = () -> ())
             end
         end
 
-        aggr = IdDict{Any, Any}()
+        aggr = Zygote.Grads()
         for θ in ps
-            aggr[θ] = mean([batch[θ] for batch in batches])
+            aggr.grads[θ] = mean([batch[θ] for batch in batches])
         end
         update!(opt, ps, aggr)
     catch ex
